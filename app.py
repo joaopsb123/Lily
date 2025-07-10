@@ -1,0 +1,67 @@
+from flask import Flask, redirect, request, session, render_template, jsonify
+import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+app = Flask(__name__)
+app.secret_key = os.getenv('FLASK_SECRET_KEY', 'supersecretkey')
+
+# Configurações do Discord OAuth2
+CLIENT_ID = os.getenv('DISCORD_CLIENT_ID')
+CLIENT_SECRET = os.getenv('DISCORD_CLIENT_SECRET')
+REDIRECT_URI = os.getenv('DISCORD_REDIRECT_URI')
+BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN')
+
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+@app.route('/login')
+def login():
+    discord_auth_url = (
+        f"https://discord.com/api/oauth2/authorize?client_id={CLIENT_ID}"
+        "&redirect_uri={REDIRECT_URI}"
+        "&response_type=code"
+        "&scope=identify%20guilds"
+    )
+    return redirect(discord_auth_url)
+
+@app.route('/auth/callback')
+def auth_callback():
+    code = request.args.get('code')
+    data = {
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET,
+        'grant_type': 'authorization_code',
+        'code': code,
+        'redirect_uri': REDIRECT_URI,
+        'scope': 'identify guilds'
+    }
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+    response = requests.post(' https://discord.com/api/oauth2/token ', data=data, headers=headers)
+    credentials = response.json()
+    access_token = credentials['access_token']
+
+    # Pegar informações do usuário
+    user_response = requests.get(
+        'https://discord.com/api/v10/users/ @me',
+        headers={'Authorization': f'Bearer {access_token}'}
+    )
+    user_data = user_response.json()
+
+    session['user'] = user_data
+    return redirect('/dashboard')
+
+@app.route('/dashboard')
+def dashboard():
+    if 'user' not in session:
+        return redirect('/')
+    user = session['user']
+    return f"Bem-vindo, {user['username']}#{user['discriminator']}!"
+
+if __name__ == '__main__':
+    app.run(debug=True)
