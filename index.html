@@ -2,30 +2,16 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
-    <style>
-        body {
-            font-family: Arial;
-            background-color: #2f3136;
-            color: white;
-            text-align: center;
-            padding-top: 50px;
-        }
-        .btn-login {
-            background-color: #7289da;
-            color: white;
-            padding: 15px 25px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-    </style>
+    <title>Dashboard do Bot</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>🎛️ Painel de Controle</h1>
-    <p>Faça login com o Discord para acessar!</p>
-    <a href="/login" class="btn-login">Login com Discord</a>
+    <div class="container">
+        <h1>🎛️ Painel de Controle</h1>
+        <button id="loginBtn">Login com Discord</button>
+        <div id="userInfo"></div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
