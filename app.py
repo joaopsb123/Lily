@@ -21,10 +21,7 @@ def home():
 @app.route('/login')
 def login():
     discord_auth_url = (
-        f"https://discord.com/api/oauth2/authorize?client_id={CLIENT_ID}"
-        "&redirect_uri={REDIRECT_URI}"
-        "&response_type=code"
-        "&scope=identify%20guilds"
+        f"https://discord.com/oauth2/authorize?client_id=1388158298305597483&response_type=code&redirect_uri=https%3A%2F%2Flily-production.up.railway.app%2F&scope=identify+email+guilds"
     )
     return redirect(discord_auth_url)
 
